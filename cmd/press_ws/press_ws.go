@@ -24,6 +24,12 @@ const (
 )
 
 func main() {
+	for {
+		process()
+	}
+}
+
+func process() {
 	var wg sync.WaitGroup
 	for i := 0; i < 20000; i++ {
 		if i%1000 == 0 {
@@ -61,8 +67,8 @@ func createConnection(url string, idx int) {
 	//ws://127.0.0.1:8889/ws/v1/d470274753a04d2793b3dc747e421a49
 	//connect, _, err := dialer.Dial("ws://bsc-mainnet-test.bk.nodereal.cc/ws/v1/beb06ff1ace649f4808094a7537124e7", nil)
 	if nil != err {
-		log.Println(err)
-		fmt.Println(err)
+		//log.Println(err)
+		//fmt.Println(err)
 		return
 	}
 	//离开作用域关闭连接，go 的常规操作
@@ -85,8 +91,8 @@ func createConnection(url string, idx int) {
 		//messageData 消息数据
 		messageType, _, err := connect.ReadMessage()
 		if nil != err {
-			log.Println(err)
-			fmt.Println(err)
+			//log.Println(err)
+			//fmt.Println(err)
 			break
 		}
 		switch messageType {
@@ -111,8 +117,8 @@ func tickWriter(connect *websocket.Conn) {
 		err := connect.WriteMessage(websocket.TextMessage, []byte(req_))
 		//err := connect.WriteMessage(websocket.TextMessage, []byte("{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_blockNumber\"}"))
 		if nil != err {
-			log.Println(err)
-			fmt.Println(err)
+			//log.Println(err)
+			//fmt.Println(err)
 			break
 		}
 		//休息一秒
