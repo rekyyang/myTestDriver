@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 )
 
 const (
+	url0_ = `ws://10.179.227.13:8545/ws/v1/f381061f86f04e2a9490b0986be10a98`
 	url1_ = `ws://bsc-mainnet-test.bk.nodereal.cc/ws/v1/f381061f86f04e2a9490b0986be10a98`
 	url2_ = `ws://eth-goerli-test.bk.nodereal.cc/ws/v1/f381061f86f04e2a9490b0986be10a98`
 	url3_ = `ws://localhost:8889/ws/v1/d470274753a04d2793b3dc747e421a49`
@@ -23,9 +25,12 @@ const (
 
 func main() {
 	var wg sync.WaitGroup
-	for i := 0; i < 30000; i++ {
+	for i := 0; i < 20000; i++ {
+		if i%1000 == 0 {
+			fmt.Println(i)
+		}
 		wg.Add(2)
-		url_ := url1_
+		url_ := url0_
 		//if i%3 == 1 {
 		//	url_ = url1_
 		//} else {
@@ -57,6 +62,7 @@ func createConnection(url string, idx int) {
 	//connect, _, err := dialer.Dial("ws://bsc-mainnet-test.bk.nodereal.cc/ws/v1/beb06ff1ace649f4808094a7537124e7", nil)
 	if nil != err {
 		log.Println(err)
+		fmt.Println(err)
 		return
 	}
 	//离开作用域关闭连接，go 的常规操作
@@ -80,6 +86,7 @@ func createConnection(url string, idx int) {
 		messageType, _, err := connect.ReadMessage()
 		if nil != err {
 			log.Println(err)
+			fmt.Println(err)
 			break
 		}
 		switch messageType {
@@ -105,6 +112,7 @@ func tickWriter(connect *websocket.Conn) {
 		//err := connect.WriteMessage(websocket.TextMessage, []byte("{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_blockNumber\"}"))
 		if nil != err {
 			log.Println(err)
+			fmt.Println(err)
 			break
 		}
 		//休息一秒
