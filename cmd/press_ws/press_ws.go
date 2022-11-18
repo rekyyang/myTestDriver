@@ -13,7 +13,7 @@ import (
 
 const (
 	url0_ = `ws://10.179.227.13:8545/ws/v1/f381061f86f04e2a9490b0986be10a98`
-	url1_ = `ws://bsc-mainnet-test.bk.nodereal.cc/ws/v1/f381061f86f04e2a9490b0986be10a98`
+	url1_ = `wss://bsc-mainnet-test.bk.nodereal.cc/ws/v1/f381061f86f04e2a9490b0986be10a98`
 	url2_ = `ws://eth-goerli-test.bk.nodereal.cc/ws/v1/f381061f86f04e2a9490b0986be10a98`
 	url3_ = `ws://localhost:8889/ws/v1/d470274753a04d2793b3dc747e421a49`
 	req_  = "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_getBlockByNumber\", \"params\":[\"latest\", false]}"
@@ -30,7 +30,7 @@ func main() {
 			fmt.Println(i)
 		}
 		wg.Add(2)
-		url_ := url0_
+		url_ := url1_
 		//if i%3 == 1 {
 		//	url_ = url1_
 		//} else {
