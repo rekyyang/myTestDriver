@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	url0_ = `ws://10.179.227.13:8545/ws/v1/f381061f86f04e2a9490b0986be10a98`
+	url0_ = `ws://localhost:8889/ws/v1/d470274753a04d2793b3dc747e421a49`
 	url1_ = `wss://bsc-mainnet-test.bk.nodereal.cc/ws/v1/f381061f86f04e2a9490b0986be10a98`
 	url2_ = `ws://eth-goerli-test.bk.nodereal.cc/ws/v1/f381061f86f04e2a9490b0986be10a98`
 	url3_ = `ws://localhost:8889/ws/v1/d470274753a04d2793b3dc747e421a49`
@@ -20,7 +20,7 @@ const (
 	//req_  = "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_chainId\"}"
 	subs_ = `{"jsonrpc":"2.0", "id": 1, "method": "eth_subscribe", "params": ["newHeads"]}`
 
-	connectionEstablishInterval = 10 // ms
+	connectionEstablishInterval = 1 // ms
 )
 
 func main() {
@@ -31,12 +31,12 @@ func main() {
 
 func process() {
 	var wg sync.WaitGroup
-	for i := 0; i < 20000; i++ {
+	for i := 0; i < 5000; i++ {
 		if i%1000 == 0 {
 			fmt.Println(i)
 		}
 		wg.Add(2)
-		url_ := url1_
+		url_ := url3_
 		//if i%3 == 1 {
 		//	url_ = url1_
 		//} else {
@@ -79,7 +79,12 @@ func createConnection(url string, idx int) {
 
 	//定时向客户端发送数据
 
-	if idx%3 == 0 {
+	if idx%1 == 0 {
+		_ = connect.WriteMessage(websocket.TextMessage, []byte(subs_))
+		_ = connect.WriteMessage(websocket.TextMessage, []byte(subs_))
+		_ = connect.WriteMessage(websocket.TextMessage, []byte(subs_))
+		_ = connect.WriteMessage(websocket.TextMessage, []byte(subs_))
+		_ = connect.WriteMessage(websocket.TextMessage, []byte(subs_))
 		_ = connect.WriteMessage(websocket.TextMessage, []byte(subs_))
 	}
 	go tickWriter(connect)
@@ -122,6 +127,6 @@ func tickWriter(connect *websocket.Conn) {
 			break
 		}
 		//休息一秒
-		time.Sleep(10000 * time.Millisecond)
+		time.Sleep(1000 * time.Millisecond)
 	}
 }
