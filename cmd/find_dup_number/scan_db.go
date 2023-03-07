@@ -22,7 +22,8 @@ import (
 const (
 	user   = "bijieprd"
 	passwd = "Csap2012"
-	DSN    = "bijieprd:Csap2012@tcp(tf-nodereal-prod-ethstates-db-ap-cluster-1.cluster-ro-cbwugcxdizut.ap-northeast-1.rds.amazonaws.com:3306)/eth_mainnet_states?parseTime=true&multiStatements=true"
+	//DSN    = "bijieprd:Csap2012@tcp(tf-nodereal-prod-ethstates-db-ap-cluster-1.cluster-ro-cbwugcxdizut.ap-northeast-1.rds.amazonaws.com:3306)/eth_mainnet_states?parseTime=true&multiStatements=true"
+	DSN = "bijieprd:Csap2012@tcp(tf-nodereal-prod-ethdataset-global-db-cluster-2.cluster-ro-cbwugcxdizut.ap-northeast-1.rds.amazonaws.com:3306)/eth_mainnet_blocks?parseTime=true&multiStatements=true"
 )
 
 type BlockMeta struct {
