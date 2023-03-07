@@ -239,7 +239,7 @@ func main() {
 
 		var count int64
 		db_ := db.WithContext(context.Background()).
-			Table(tableName).
+			Table(tableName).Select("number").
 			Where("number = ?", blockNumber).Count(&count)
 
 		if count != 1 {
