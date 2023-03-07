@@ -230,7 +230,8 @@ func main() {
 	fmt.Println("connect successfully")
 
 	//start := 13858856
-	start := 15000000
+	//start := 15000000 // x
+	start := 15500000 // x
 	//end := 16774955
 	//start := 0
 	end := start + 100000
