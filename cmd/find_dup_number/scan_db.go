@@ -236,11 +236,13 @@ func main() {
 	//start := 15625000 // y
 	//start := 15575000 // y
 	//start := 15537500 // y
-	//start := 15518750 // y
-	start := 15528750 // y
+	//start := 15518750 // x
+	start := 15528750 // x
 	//end := 16774955
 	//start := 0
 	end := start + 100000
+
+	// last record bn 15537380
 
 	for blockNumber := start; blockNumber <= end; blockNumber++ {
 		tableName := fmt.Sprintf("headers_part%v", blockNumber/5000000)
