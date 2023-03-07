@@ -229,10 +229,12 @@ func main() {
 
 	fmt.Println("connect successfully")
 
+	start := 13858856
 	//end := 16774955
-	end := 2
+	//start := 0
+	end := start
 
-	for blockNumber := 0; blockNumber < end; blockNumber++ {
+	for blockNumber := start; blockNumber <= end; blockNumber++ {
 		var hdr Header
 		tableName := fmt.Sprintf("headers_part%v", blockNumber/5000000)
 		if err := db.WithContext(context.Background()).
@@ -246,5 +248,6 @@ func main() {
 		if blockNumber%1000 == 0 {
 			fmt.Printf("%d", blockNumber)
 		}
+		fmt.Println(hdr)
 	}
 }
