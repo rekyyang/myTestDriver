@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/node-real/blocktree/models"
@@ -24,7 +23,8 @@ func main() {
 		},
 	)
 	if err != nil {
-		log.Panicf(err.Error())
+		fmt.Println(err.Error())
+		return
 	}
 
 	//end := 16774955
