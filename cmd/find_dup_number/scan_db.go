@@ -27,6 +27,8 @@ func main() {
 		return
 	}
 
+	fmt.Println("connect successfully")
+
 	//end := 16774955
 	end := 20000
 
