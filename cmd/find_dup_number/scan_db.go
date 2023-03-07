@@ -243,7 +243,7 @@ func main() {
 			Where("number = ?", blockNumber).Count(&count)
 
 		if count != 1 {
-			fmt.Printf("bn: %d, count: %d", blockNumber, count)
+			fmt.Printf("bn: %d, count: %d\n", blockNumber, count)
 		}
 		_ = db_
 
@@ -259,7 +259,7 @@ func main() {
 		//}
 		time.Sleep(10 * time.Millisecond)
 		if blockNumber%1000 == 0 {
-			fmt.Printf("%d", blockNumber)
+			fmt.Printf("%d\n", blockNumber)
 		}
 	}
 }
