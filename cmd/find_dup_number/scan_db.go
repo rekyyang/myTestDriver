@@ -241,7 +241,7 @@ func main() {
 	start := 15537381 // x
 	//end := 16774955
 	//start := 0
-	end := start + 10000
+	end := start + 100000
 
 	// last record bn 15537380
 	// Sep-15-2022 06:40:27 AM +UTC)
