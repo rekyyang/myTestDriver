@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/node-real/blocktree/models"
 	"gorm.io/driver/mysql"
@@ -25,7 +26,11 @@ func main() {
 	if err != nil {
 		log.Panicf(err.Error())
 	}
-	for blockNumber := 0; blockNumber < 16774955; blockNumber++ {
+
+	//end := 16774955
+	end := 20000
+
+	for blockNumber := 0; blockNumber < end; blockNumber++ {
 		var hdr models.Header
 		tableName := fmt.Sprintf("headers_part%v", blockNumber/5000000)
 		if err := db.WithContext(context.Background()).
@@ -34,6 +39,10 @@ func main() {
 			Take(&hdr).Error; err != nil {
 			fmt.Printf("err : %s, bn : %d\n", err.Error(), blockNumber)
 			continue
+		}
+		time.Sleep(10 * time.Millisecond)
+		if blockNumber%1000 == 0 {
+			fmt.Printf("%d", blockNumber)
 		}
 	}
 }
