@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/node-real/blocktree/models"
+	"github.com/ethereum/go-ethereum/core/types"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -33,7 +33,7 @@ func main() {
 	end := 20000
 
 	for blockNumber := 0; blockNumber < end; blockNumber++ {
-		var hdr models.Header
+		var hdr types.Header
 		tableName := fmt.Sprintf("headers_part%v", blockNumber/5000000)
 		if err := db.WithContext(context.Background()).
 			Table(tableName).
