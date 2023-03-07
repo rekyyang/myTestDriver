@@ -237,7 +237,8 @@ func main() {
 	//start := 15575000 // y
 	//start := 15537500 // y
 	//start := 15518750 // x
-	start := 15528750 // x
+	//start := 15528750 // x
+	start := 15537381 // x
 	//end := 16774955
 	//start := 0
 	end := start + 10000
