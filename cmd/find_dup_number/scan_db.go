@@ -235,19 +235,29 @@ func main() {
 	end := start
 
 	for blockNumber := start; blockNumber <= end; blockNumber++ {
-		var hdr Header
 		tableName := fmt.Sprintf("headers_part%v", blockNumber/5000000)
-		if err := db.WithContext(context.Background()).
+
+		var count int64
+		db_ := db.WithContext(context.Background()).
 			Table(tableName).
-			Where("number = ?", blockNumber).
-			Take(&hdr).Error; err != nil {
-			fmt.Printf("err : %s, bn : %d\n", err.Error(), blockNumber)
-			continue
+			Where("number = ?", blockNumber).Count(&count)
+
+		for i := 0; i < int(count); i++ {
+			var hdr Header
+			if err := db_.WithContext(context.Background()).
+				Table(tableName).
+				Where("number = ?", blockNumber).Offset(i).
+				Take(&hdr).Error; err != nil {
+				fmt.Printf("err : %s, bn : %d\n", err.Error(), blockNumber)
+				continue
+			}
+			if count != 1 {
+				fmt.Println(hdr.ParentHash)
+			}
 		}
 		time.Sleep(10 * time.Millisecond)
 		if blockNumber%1000 == 0 {
 			fmt.Printf("%d", blockNumber)
 		}
-		fmt.Println(hdr)
 	}
 }
