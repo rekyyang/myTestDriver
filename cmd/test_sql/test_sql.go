@@ -89,12 +89,12 @@ func testDb(dsn string, iterNum int, label string) {
 	endTime := time.Now()
 	fmt.Println()
 	fmt.Println()
-	fmt.Printf("%s latency: %v", label, endTime.After(startTime))
+	fmt.Printf("%s latency: %v", label, endTime.Sub(startTime))
 	fmt.Println()
 	fmt.Println()
 }
 
 func main() {
-	testDb(DSN4X, 10, "4x")
-	testDb(DSN8X, 10, "8x")
+	testDb(DSN4X, 10000, "4x")
+	testDb(DSN8X, 10000, "8x")
 }
