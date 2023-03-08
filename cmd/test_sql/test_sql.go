@@ -69,14 +69,13 @@ func testDb(dsn string, iterNum int, label string) {
 			Table("storages_part1000").
 			Where("address = ? AND number <= ?", address, number).
 			Order("number DESC").
-			Limit(1).
-			Take(&s).Error; err != nil {
+			Limit(1).Error; err != nil {
 			fmt.Printf(err.Error())
 			return
 		}
 
 		var c Code
-		if err := db.WithContext(context.Background()).Where("hash = ?", hash).Take(&c).Error; err != nil {
+		if err := db.WithContext(context.Background()).Where("hash = ?", hash).Error; err != nil {
 			fmt.Printf(err.Error())
 			return
 		}
