@@ -48,7 +48,7 @@ func testDb(dsn string, iterNum int) {
 	}
 	fmt.Printf("%s connect successfully", dsn)
 	hash := common.Hash{}
-	hash.UnmarshalText([]byte("0x0a29702D828C3bd9bA20C8d0cD46Dfb853422E98"))
+	hash.UnmarshalText([]byte("0x00004bbb305c6875f77ea6fa33724f09a0bebe74932b692339002befcdeae316"))
 	for i := 0; i < iterNum; i++ {
 		//var st Storage
 		//if err := db.WithContext(context.Background()).Table(storagesTable(pid)).
@@ -62,12 +62,14 @@ func testDb(dsn string, iterNum int) {
 		//	}
 		//	return common.Hash{}, false, err
 		//}
+		var s Storage
 		var c Code
-		if err := db.WithContext(context.Background()).Limit(1).Take(&c).Error; err != nil {
+		if err := db.WithContext(context.Background()).Table("storage_part501").Where("number = ?", 10030001).Take(&s).Error; err != nil {
 			fmt.Printf(err.Error())
 			return
 		}
 
+		fmt.Println(s)
 		fmt.Println(c)
 		return
 		//if err := db.WithContext(context.Background()).Where("hash = ?", hash).Take(&c).Error; err != nil {
