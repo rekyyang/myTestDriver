@@ -94,6 +94,6 @@ func testDb(dsn string, iterNum int, label string) {
 }
 
 func main() {
-	testDb(DSN4X, 10000, "4x")
-	testDb(DSN8X, 10000, "8x")
+	testDb(DSN4X, 1000000, "4x")
+	testDb(DSN8X, 1000000, "8x")
 }
