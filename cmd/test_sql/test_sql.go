@@ -81,6 +81,8 @@ func testDb(dsn string, iterNum int, label string) {
 		}
 
 		if i == 0 {
+			_ = s
+			_ = c
 			//fmt.Println(s.Number)
 			//fmt.Println(c.Hash)
 		}
