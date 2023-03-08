@@ -50,12 +50,12 @@ type param struct {
 
 func main() {
 	startBn := 24281658
-	endBn := startBn + 2000
+	endBn := startBn + 200
 	ep4s_url := []string{ep4x}
 	client4x, _ := jsonrpc.NewClient(jsonrpc.WithURLEndpoint("states4x", ep4s_url))
 
-	//ep8s_url := []string{ep8x}
-	//client8x, _ := jsonrpc.NewClient(jsonrpc.WithURLEndpoint("states8x", ep8s_url))
+	ep8s_url := []string{ep8x}
+	client8x, _ := jsonrpc.NewClient(jsonrpc.WithURLEndpoint("states8x", ep8s_url))
 
 	param_ := param{
 		Data:     data,
@@ -67,7 +67,7 @@ func main() {
 	start1 := time.Now()
 	for bn := startBn; bn < endBn; bn++ {
 		bn_ := hexutil.EncodeUint64(uint64(bn))
-		resp, err := client4x.Call(context.Background(), jsonrpc.NewRequest(0, method, param_, bn_))
+		_, err := client4x.Call(context.Background(), jsonrpc.NewRequest(0, method, param_, bn_))
 		if err != nil {
 			fmt.Println(err.Error())
 			return
@@ -76,4 +76,17 @@ func main() {
 	}
 	end1 := time.Now()
 	fmt.Println(end1.Sub(start1))
+
+	start2 := time.Now()
+	for bn := startBn; bn < endBn; bn++ {
+		bn_ := hexutil.EncodeUint64(uint64(bn))
+		_, err := client8x.Call(context.Background(), jsonrpc.NewRequest(0, method, param_, bn_))
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+		//fmt.Println(resp)
+	}
+	end2 := time.Now()
+	fmt.Println(end2.Sub(start2))
 }
