@@ -243,17 +243,19 @@ func main() {
 	//start := 0
 	end := start + 100000
 
-	// last record bn 15537380
+	// last record dup bn 15537380
 	// Sep-15-2022 06:40:27 AM +UTC)
 	// Sep-15-2022 14:40:27 UTC+8)
 
-	var count int64
-	tableName := fmt.Sprintf("headers_part%v", start/5000000)
-	_ = db.WithContext(context.Background()).
-		Table(tableName).Select("number").
-		Where("number >= ? and number <= ?", start, end).Count(&count)
-	fmt.Println(count)
-	return
+	// 北京时间2022年9月15日14时44分 eth2.0合并 15537394
+
+	//var count int64
+	//tableName := fmt.Sprintf("headers_part%v", start/5000000)
+	//_ = db.WithContext(context.Background()).
+	//	Table(tableName).Select("number").
+	//	Where("number >= ? and number <= ?", start, end).Count(&count)
+	//fmt.Println(count)
+	//return
 
 	for blockNumber := start; blockNumber <= end; blockNumber++ {
 		tableName := fmt.Sprintf("headers_part%v", blockNumber/5000000)
