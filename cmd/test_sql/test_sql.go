@@ -14,7 +14,9 @@ const (
 	user   = "bijieprd"
 	passwd = "Csap2012"
 	//DSN    = "bijieprd:Csap2012@tcp(tf-nodereal-prod-ethstates-db-ap-cluster-1.cluster-ro-cbwugcxdizut.ap-northeast-1.rds.amazonaws.com:3306)/eth_mainnet_states?parseTime=true&multiStatements=true"
-	DSN = "bijieprd:Csap2012@tcp(tf-nodereal-prod-ethdataset-global-db-cluster-2.cluster-ro-cbwugcxdizut.ap-northeast-1.rds.amazonaws.com:3306)/eth_mainnet_blocks?parseTime=true&multiStatements=true"
+	DSN   = "bijieprd:Csap2012@tcp(tf-nodereal-prod-ethdataset-global-db-cluster-2.cluster-ro-cbwugcxdizut.ap-northeast-1.rds.amazonaws.com:3306)/eth_mainnet_blocks?parseTime=true&multiStatements=true"
+	DSN4X = "bijieprd:CtxfbMM2ov5git6m@tcp(test-qa-states-4xlarge.cluster-custom-cb6vaj1ctcqk.us-east-1.rds.amazonaws.com:3306)/statesdb?parseTime=true&multiStatements=true"
+	DSN8X = "bijieprd:CtxfbMM2ov5git6m@tcp(states-8xlarge-single-test.cluster-custom-cb6vaj1ctcqk.us-east-1.rds.amazonaws.com:3306)/statesdb?parseTime=true&multiStatements=true"
 )
 
 type Storage struct {
@@ -69,4 +71,5 @@ func testDb(dsn string, iterNum int) {
 }
 
 func main() {
+	testDb(DSN4X, 10)
 }
