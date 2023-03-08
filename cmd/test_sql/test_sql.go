@@ -56,7 +56,7 @@ func testDb(dsn string, iterNum int, label string) {
 	// data 0x000000000000000000000000000000000000000000000070f3866ee30d9a3a38
 	var address common.Address
 	address.UnmarshalText([]byte("0x0000000000000000000000000000000000001000"))
-	var number = 20013100
+	var number = 20013101
 
 	// code
 	fmt.Printf("%s connect successfully \n", dsn)
