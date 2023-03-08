@@ -69,6 +69,7 @@ func main() {
 		bn_ := hexutil.EncodeUint64(uint64(bn))
 		resp, err := client4x.Call(context.Background(), jsonrpc.NewRequest(0, method, param_, bn_))
 		if err != nil {
+			fmt.Println(err.Error())
 			return
 		}
 		fmt.Println(resp)
