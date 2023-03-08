@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/ethereum/go-ethereum/common"
 	"gorm.io/driver/mysql"
@@ -36,7 +37,7 @@ type Code struct {
 	Code []byte      `gorm:"column:code;type:BLOB"`
 }
 
-func testDb(dsn string, iterNum int) {
+func testDb(dsn string, iterNum int, label string) {
 	db, err := gorm.Open(mysql.Open(dsn),
 		&gorm.Config{
 			DisableForeignKeyConstraintWhenMigrating: true,
@@ -58,9 +59,10 @@ func testDb(dsn string, iterNum int) {
 	var number = 20013100
 
 	// code
-	fmt.Printf("%s connect successfully", dsn)
+	fmt.Printf("%s connect successfully \n", dsn)
 	hash := common.Hash{}
 	hash.UnmarshalText([]byte("0x00004bbb305c6875f77ea6fa33724f09a0bebe74932b692339002befcdeae316"))
+	startTime := time.Now()
 	for i := 0; i < iterNum; i++ {
 		var s Storage
 		if err := db.WithContext(context.Background()).
@@ -83,10 +85,16 @@ func testDb(dsn string, iterNum int) {
 			fmt.Println(s.Number)
 			fmt.Println(c.Hash)
 		}
-		return
 	}
+	endTime := time.Now()
+	fmt.Println()
+	fmt.Println()
+	fmt.Printf("%s latency: %v", label, endTime.After(startTime))
+	fmt.Println()
+	fmt.Println()
 }
 
 func main() {
-	testDb(DSN4X, 10)
+	testDb(DSN4X, 10, "4x")
+	testDb(DSN8X, 10, "8x")
 }
