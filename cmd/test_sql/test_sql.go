@@ -71,7 +71,7 @@ func testDb(dsn string, iterNum int) {
 		//}
 		var s Storage
 		var c Code
-		if err := db.WithContext(context.Background()).Table("storages_part501").Where("number = ?", 10030211).Take(&s).Error; err != nil {
+		if err := db.WithContext(context.Background()).Table("storages_part501").Where("number = ?", 10030202).Take(&s).Error; err != nil {
 			fmt.Printf(err.Error())
 			return
 		}
