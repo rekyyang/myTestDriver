@@ -54,8 +54,8 @@ func main() {
 	ep4s_url := []string{ep4x}
 	client4x, _ := jsonrpc.NewClient(jsonrpc.WithURLEndpoint("states4x", ep4s_url))
 
-	ep8s_url := []string{ep8x}
-	client8x, _ := jsonrpc.NewClient(jsonrpc.WithURLEndpoint("states8x", ep8s_url))
+	//ep8s_url := []string{ep8x}
+	//client8x, _ := jsonrpc.NewClient(jsonrpc.WithURLEndpoint("states8x", ep8s_url))
 
 	param_ := param{
 		Data:     data,
