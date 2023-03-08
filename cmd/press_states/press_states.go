@@ -50,7 +50,7 @@ type param struct {
 
 func main() {
 	startBn := 24281658
-	endBn := startBn + 200
+	endBn := startBn + 2000
 	ep4s_url := []string{ep4x}
 	client4x, _ := jsonrpc.NewClient(jsonrpc.WithURLEndpoint("states4x", ep4s_url))
 
