@@ -72,14 +72,17 @@ func testDb(dsn string, iterNum int) {
 			fmt.Printf(err.Error())
 			return
 		}
-		fmt.Println(s)
 
 		var c Code
 		if err := db.WithContext(context.Background()).Where("hash = ?", hash).Take(&c).Error; err != nil {
 			fmt.Printf(err.Error())
 			return
 		}
-		fmt.Println(c)
+
+		if i == 0 {
+			fmt.Println(s.Number)
+			fmt.Println(c.Hash)
+		}
 		return
 	}
 }
