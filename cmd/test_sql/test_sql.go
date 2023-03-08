@@ -51,38 +51,36 @@ func testDb(dsn string, iterNum int) {
 	// address 0x0000000000000000000000000000000000001000
 	// slot 0x0000000000000000000000000000000000000000000000000000000000000003
 	// incarnation 1
-	// number 10030211
+	// number 20010100
+	// data 0x000000000000000000000000000000000000000000000070f3866ee30d9a3a38
+	var address common.Address
+	address.UnmarshalText([]byte("0x0000000000000000000000000000000000001000"))
+	var number = 20013100
 
+	// code
 	fmt.Printf("%s connect successfully", dsn)
 	hash := common.Hash{}
 	hash.UnmarshalText([]byte("0x00004bbb305c6875f77ea6fa33724f09a0bebe74932b692339002befcdeae316"))
 	for i := 0; i < iterNum; i++ {
-		//var st Storage
-		//if err := db.WithContext(context.Background()).Table(storagesTable(pid)).
-		//	Where("address = ? AND slot = ? AND incarnation = ? AND number <= ?", address, slot, incarnation, number).
-		//	Order("number DESC").
-		//	Limit(1).
-		//	Take(&st).Error; err != nil {
-		//
-		//	if errIsNotFound(err) {
-		//		err = nil
-		//	}
-		//	return common.Hash{}, false, err
-		//}
 		var s Storage
-		var c Code
-		if err := db.WithContext(context.Background()).Table("storages_part1000").Where("number = ?", 20010100).Take(&s).Error; err != nil {
+		if err := db.WithContext(context.Background()).
+			Table("storages_part1000").
+			Where("address = ? AND number <= ?", address, number).
+			Order("number DESC").
+			Limit(1).
+			Take(&s).Error; err != nil {
 			fmt.Printf(err.Error())
 			return
 		}
-
 		fmt.Println(s)
+
+		var c Code
+		if err := db.WithContext(context.Background()).Where("hash = ?", hash).Take(&c).Error; err != nil {
+			fmt.Printf(err.Error())
+			return
+		}
 		fmt.Println(c)
 		return
-		//if err := db.WithContext(context.Background()).Where("hash = ?", hash).Take(&c).Error; err != nil {
-		//	fmt.Printf(err.Error())
-		//	return
-		//}
 	}
 }
 
