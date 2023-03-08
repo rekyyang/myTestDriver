@@ -1,4 +1,4 @@
-package press_states
+package main
 
 import (
 	"context"
