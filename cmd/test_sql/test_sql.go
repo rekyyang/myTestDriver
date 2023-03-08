@@ -63,10 +63,17 @@ func testDb(dsn string, iterNum int) {
 		//	return common.Hash{}, false, err
 		//}
 		var c Code
-		if err := db.WithContext(context.Background()).Where("hash = ?", hash).Take(&c).Error; err != nil {
+		if err := db.WithContext(context.Background()).Limit(1).Take(&c).Error; err != nil {
 			fmt.Printf(err.Error())
 			return
 		}
+
+		fmt.Println(c)
+		return
+		//if err := db.WithContext(context.Background()).Where("hash = ?", hash).Take(&c).Error; err != nil {
+		//	fmt.Printf(err.Error())
+		//	return
+		//}
 	}
 }
 
