@@ -46,6 +46,13 @@ func testDb(dsn string, iterNum int) {
 		fmt.Println(err.Error())
 		return
 	}
+
+	// storages
+	// address 0x0000000000000000000000000000000000001000
+	// slot 0x0000000000000000000000000000000000000000000000000000000000000003
+	// incarnation 1
+	// number 10030001
+
 	fmt.Printf("%s connect successfully", dsn)
 	hash := common.Hash{}
 	hash.UnmarshalText([]byte("0x00004bbb305c6875f77ea6fa33724f09a0bebe74932b692339002befcdeae316"))
@@ -64,7 +71,7 @@ func testDb(dsn string, iterNum int) {
 		//}
 		var s Storage
 		var c Code
-		if err := db.WithContext(context.Background()).Table("storages_part501").Where("number = ?", 10030001).Take(&s).Error; err != nil {
+		if err := db.WithContext(context.Background()).Table("storages_part501").Where("number = ?", 10030201).Take(&s).Error; err != nil {
 			fmt.Printf(err.Error())
 			return
 		}
