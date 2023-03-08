@@ -72,7 +72,7 @@ func main() {
 			fmt.Println(err.Error())
 			return
 		}
-		fmt.Println(resp)
+		//fmt.Println(resp)
 	}
 	end1 := time.Now()
 	fmt.Println(end1.Sub(start1))
