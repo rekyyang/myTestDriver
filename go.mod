@@ -6,7 +6,6 @@ require (
 	github.com/ethereum/go-ethereum v1.11.2
 	github.com/gorilla/websocket v1.5.0
 	github.com/node-real/go-pkg v0.0.6-0.20230222063514-e2f600a4dd67
-	github.com/node-real/rpc-ap v0.0.0-20230301011407-9c8f774c22ff
 	gorm.io/driver/mysql v1.4.7
 	gorm.io/gorm v1.24.6
 )
@@ -32,6 +31,7 @@ require (
 	github.com/google/gnostic v0.5.7-v3refs // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/gofuzz v1.1.1-0.20200604201612-c04b05f3adfa // indirect
+	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
