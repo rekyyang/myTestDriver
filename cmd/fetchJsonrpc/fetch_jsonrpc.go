@@ -159,7 +159,7 @@ func fetchTraceReplayBlock(bnStart, bnRange int) {
 
 // get transactions
 func fetchTransaction(bnStart, bnRange int) {
-	noderealUrl := "https://eth-goerli.nodereal.cc/v1/f381061f86f04e2a9490b0986be10a98"
+	//noderealUrl := "https://eth-goerli.nodereal.cc/v1/f381061f86f04e2a9490b0986be10a98"
 	//clientNodereal, _ := jsonrpc.NewClient(jsonrpc.WithURLEndpoint("nodereal_goerli", []string{noderealUrl}))
 
 	txs := make([]*common.Hash, 0)
