@@ -1,0 +1,1 @@
+{"jsonrpc":"2.0","id":82,"result":[{"action":{"author":"0x0000000000000000000000000000000000000000","rewardType":"block","value":"0x1bc16d674ec80000"},"blockHash":"0x814cfef767d72b67567c0b3b32339410cfa02f2b8523f359a10934a61c23ad36","blockNumber":82,"result":null,"subtraces":0,"traceAddress":[],"type":"reward"}]}
