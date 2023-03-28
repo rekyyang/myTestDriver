@@ -1,21 +1,21 @@
 package main
 
 import (
-	"bytes"
+	"bufio"
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"math/big"
 	"os"
+	"path"
 	"strconv"
+	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
 	jsoniter "github.com/json-iterator/go"
 	jsonrpc "github.com/node-real/go-pkg/jsonrpc2"
 	"github.com/node-real/go-pkg/log"
@@ -25,6 +25,7 @@ const (
 	StartBlkNo1 = 0x10
 	StartBlkNo2 = 0x10000
 	StartBlkNo3 = 0x832087
+	StartBlkNo4 = 0x85373a
 
 	BlkRange = 100
 )
@@ -74,6 +75,27 @@ type RealBlock struct {
 
 	WithdrawalsHash common.Hash         `json:"withdrawalsRoot,omitempty"`
 	Withdrawals     []*types.Withdrawal `json:"withdrawals,omitempty"`
+}
+
+type TransactionArgs struct {
+	From                 *common.Address `json:"from,omitempty"`
+	To                   *common.Address `json:"to,omitempty"`
+	Gas                  *hexutil.Uint64 `json:"gas,omitempty"`
+	GasPrice             *hexutil.Big    `json:"gasPrice,omitempty"`
+	MaxFeePerGas         *hexutil.Big    `json:"maxFeePerGas,omitempty"`
+	MaxPriorityFeePerGas *hexutil.Big    `json:"maxPriorityFeePerGas,omitempty"`
+	Value                *hexutil.Big    `json:"value,omitempty"`
+	Nonce                *hexutil.Uint64 `json:"nonce,omitempty"`
+
+	// We accept "data" and "input" for backwards-compatibility reasons.
+	// "input" is the newer name and should be preferred by clients.
+	// Issue detail: https://github.com/ethereum/go-ethereum/issues/15628
+	Data  *hexutil.Bytes `json:"data"`
+	Input *hexutil.Bytes `json:"input"`
+
+	// Introduced by AccessListTxType transaction.
+	AccessList *types.AccessList `json:"accessList,omitempty"`
+	ChainID    *hexutil.Big      `json:"chainId,omitempty"`
 }
 
 // RPCTransaction represents a transaction that will serialize to the RPC representation of a transaction
@@ -142,9 +164,79 @@ func main() {
 	//os.Mkdir("trace_get", os.ModePerm)
 	//fetchTraceGet(100, 10)
 
-	os.Mkdir("trace_filter", os.ModePerm)
-	fetchTraceFilter(StartBlkNo3, 10)
+	//os.Mkdir("trace_filter", os.ModePerm)
+	//fetchTraceFilter(StartBlkNo3, 10)
 
+	os.Mkdir("trace_call", os.ModePerm)
+	fetchTraceCall(StartBlkNo4, 10)
+
+	//validateJsonRpc([]string{
+	//	"trace_block",
+	//	"trace_replayBlockTransactions",
+	//	"trace_transaction",
+	//	"trace_replayTransaction",
+	//	"trace_get",
+	//	"trace_filter",
+	//})
+
+}
+
+func validateJsonRpc(folders []string) {
+	failedPath := make([]string, 0)
+	errPath := make([]string, 0)
+
+	var hdr = make(map[string]string)
+	hdr["Origin"] = "https://docs.alchemy.com"
+
+	for _, folder := range folders {
+		files, err := os.ReadDir(folder)
+		if err != nil {
+			panic(err.Error())
+		}
+		for _, file := range files {
+			pth := path.Join(folder, file.Name())
+			fp, err := os.Open(pth)
+			if err != nil {
+				log.Errorf(err.Error())
+				errPath = append(errPath, pth)
+				continue
+			}
+			scanner := bufio.NewScanner(fp)
+			buf := make([]byte, 1024*1024*32)
+			scanner.Buffer(buf, 1024*1024*32)
+			scanner.Scan()
+
+			if err := scanner.Err(); err != nil {
+				fmt.Println(err)
+				errPath = append(errPath, pth)
+				continue
+			}
+			content := Content{}
+			err = jsoniter.Unmarshal(scanner.Bytes(), &content)
+			if err != nil {
+				fmt.Println(err.Error())
+				errPath = append(errPath, pth)
+				continue
+			}
+
+			respAct, err := clientAlchemy.Call(context.Background(), content.Req, jsonrpc.CallWithHeader(hdr))
+			if err != nil {
+				fmt.Println(err.Error())
+				errPath = append(errPath, pth)
+				continue
+			}
+			rawRespExp, _ := jsoniter.MarshalToString(content.Rsp)
+			rawRespAct, _ := jsoniter.MarshalToString(respAct)
+			if rawRespExp != rawRespAct {
+				failedPath = append(failedPath, pth)
+				fmt.Printf("failed case : %s\n", pth)
+			} else {
+				fmt.Printf("passed case : %s\n", pth)
+			}
+
+			fp.Close()
+		}
+	}
 }
 
 // trace_block
@@ -506,32 +598,75 @@ func fetchTraceFilter(bnStart, bnRange int) {
 	}
 }
 
-func fetchTraceCall(bnStart, bnRange, paramRange int) {
-	ethCli, err := ethclient.Dial(nodeRealProdUrl)
+func fetchTraceCall(bnStart, bnRange int) {
+	method := "trace_call"
+	var hdr = make(map[string]string)
+	hdr["Origin"] = "https://docs.alchemy.com"
+
+	from := common.Address{}
+	to := common.Address{}
+	bts, err := hexutil.Decode("0xec50907ad1d361dfa116b690b67ef33685218523")
+	to.SetBytes(bts)
 	if err != nil {
-		fmt.Println(err.Error())
-		return
+		fmt.Println(err)
 	}
-	ethCli.CallContract(context.Background(), ethereum.CallMsg{
-		From:       common.Address{},
-		To:         nil,
-		Gas:        0,
-		GasPrice:   nil,
-		GasFeeCap:  nil,
-		GasTipCap:  nil,
-		Value:      nil,
-		Data:       nil,
-		AccessList: nil,
-	}, big.NewInt(int64(bnStart)))
-	abi.ConvertType()
+	dataPrefix := "0x9724283f00000000000000000000000000000000"
+
+	for bn := bnStart; bn < bnStart+bnRange; bn++ {
+		for gap := 1; gap <= 256; gap += 8 {
+			dataSurfix := hexutil.EncodeUint64(uint64(bn - gap))[2:]
+			padding := strings.Repeat("0", 32-len(dataSurfix))
+			dataSurfix = padding + dataSurfix
+			dataRaw := dataPrefix + dataSurfix
+			data, _ := hexutil.Decode(dataRaw)
+			callBody := TransactionArgs{
+				From: &from,
+				To:   &to,
+				Data: (*hexutil.Bytes)(&data),
+			}
+			hx := "0x" + strconv.FormatInt(int64(bn), 16)
+			req := jsonrpc.NewRequest(bn, method, callBody, []string{"trace"}, hx)
+			fn := generateFileName(req)
+			resp, err := clientAlchemy.Call(context.Background(), req, jsonrpc.CallWithHeader(hdr))
+			if err != nil {
+				fmt.Println(err.Error())
+				continue
+			}
+			writeReqResp(fn, req, resp)
+			time.Sleep(200 * time.Millisecond)
+		}
+	}
 }
+
+//func fetchTraceCall(bnStart, bnRange, paramRange int) {
+//	ethCli, err := ethclient.Dial(nodeRealProdUrl)
+//	if err != nil {
+//		fmt.Println(err.Error())
+//		return
+//	}
+//	ethCli.CallContract(context.Background(), ethereum.CallMsg{
+//		From:       common.Address{},
+//		To:         nil,
+//		Gas:        0,
+//		GasPrice:   nil,
+//		GasFeeCap:  nil,
+//		GasTipCap:  nil,
+//		Value:      nil,
+//		Data:       nil,
+//		AccessList: nil,
+//	}, big.NewInt(int64(bnStart)))
+//	abi.ConvertType()
+//}
 
 func generateFileName(req *jsonrpc.Request) string {
 	fileName := fmt.Sprintf("%s/%s_%s.json", req.Method, req.Method, string(req.Params))
 	if len(fileName) > 100 {
-		hash := common.BytesToHash([]byte(fileName))
+		fileName_ := fileName
+		h := sha256.New()
+		h.Write([]byte(fileName_))
+		hash := hex.EncodeToString(h.Sum(nil))
 		fileName = fileName[:100]
-		fileName = fmt.Sprintf("%s-hash[%s]", fileName, hash)
+		fileName = fmt.Sprintf("%s-hash[%s].json", fileName, hash)
 	}
 	return fileName
 }
@@ -578,49 +713,49 @@ func writeJson(fileName string, content interface{}) {
 	}
 }
 
-func validate(dirs []string) {
-	os.Mkdir("diff", os.ModePerm)
-	for _, dir := range dirs {
-		files, err := os.ReadDir(dir)
-		if err != nil {
-			log.Errorf(err.Error())
-			continue
-		}
-		for _, file := range files {
-			fp, err := os.Open(file.Name())
-			if err != nil {
-				log.Errorf(err.Error())
-				continue
-			}
-			content := Content{}
-			decoder := jsoniter.NewDecoder(fp)
-			err = decoder.Decode(&content)
-			if err != nil {
-				log.Errorf(err.Error())
-				continue
-			}
-			req := content.Req
-			exp := content.Rsp
-			act, err := clientNodeRealTracer.Call(context.Background(), req)
-			if err != nil {
-				log.Errorf(err.Error())
-				continue
-			}
-			expJson, err := jsoniter.Marshal(exp)
-			actJson, err := jsoniter.Marshal(act)
-			if bytes.Compare(expJson, actJson) != 0 {
-				log.Errorf("compare failed file [%s], err [%s]", file.Name(), err.Error())
-				writeJson(generateFileName(req), struct {
-					Req    *jsonrpc.Request
-					RspExp *jsonrpc.Response
-					RspAct *jsonrpc.Response
-				}{
-					Req:    req,
-					RspExp: exp,
-					RspAct: act,
-				})
-				continue
-			}
-		}
-	}
-}
+//func validate(dirs []string) {
+//	os.Mkdir("diff", os.ModePerm)
+//	for _, dir := range dirs {
+//		files, err := os.ReadDir(dir)
+//		if err != nil {
+//			log.Errorf(err.Error())
+//			continue
+//		}
+//		for _, file := range files {
+//			fp, err := os.Open(file.Name())
+//			if err != nil {
+//				log.Errorf(err.Error())
+//				continue
+//			}
+//			content := Content{}
+//			decoder := jsoniter.NewDecoder(fp)
+//			err = decoder.Decode(&content)
+//			if err != nil {
+//				log.Errorf(err.Error())
+//				continue
+//			}
+//			req := content.Req
+//			exp := content.Rsp
+//			act, err := clientNodeRealTracer.Call(context.Background(), req)
+//			if err != nil {
+//				log.Errorf(err.Error())
+//				continue
+//			}
+//			expJson, err := jsoniter.Marshal(exp)
+//			actJson, err := jsoniter.Marshal(act)
+//			if bytes.Compare(expJson, actJson) != 0 {
+//				log.Errorf("compare failed file [%s], err [%s]", file.Name(), err.Error())
+//				writeJson(generateFileName(req), struct {
+//					Req    *jsonrpc.Request
+//					RspExp *jsonrpc.Response
+//					RspAct *jsonrpc.Response
+//				}{
+//					Req:    req,
+//					RspExp: exp,
+//					RspAct: act,
+//				})
+//				continue
+//			}
+//		}
+//	}
+//}
