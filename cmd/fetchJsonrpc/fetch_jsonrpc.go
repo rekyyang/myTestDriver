@@ -166,7 +166,7 @@ func main() {
 	fetchTraceGet(100, 10)
 
 	os.Mkdir("trace_filter", os.ModePerm)
-	fetchTraceFilter(StartBlkNo3, 10)
+	fetchTraceFilter(StartBlkNoAfterShanghai, 10)
 
 	//os.Mkdir("trace_call", os.ModePerm)
 	//fetchTraceCall(StartBlkNo4, 10)
