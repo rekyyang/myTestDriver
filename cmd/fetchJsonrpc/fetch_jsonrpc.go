@@ -26,7 +26,7 @@ const (
 	StartBlkNo2             = 0x10000
 	StartBlkNo3             = 0x832087
 	StartBlkNo4             = 0x85373a
-	StartBlkNoAfterShanghai = 0x85373a
+	StartBlkNoAfterShanghai = 0x85f31a
 
 	BlkRange = 100
 )
@@ -145,28 +145,28 @@ type TraceFilterRequest struct {
 }
 
 func main() {
-	//os.Mkdir("trace_block", os.ModePerm)
-	//fetchTraceBlock(StartBlkNo3, BlkRange)
+	os.Mkdir("trace_block", os.ModePerm)
+	fetchTraceBlock(StartBlkNoAfterShanghai, BlkRange)
 	//
-	//os.Mkdir("trace_replayBlockTransactions", os.ModePerm)
-	//fetchTraceReplayBlock(StartBlkNo3, 10)
+	os.Mkdir("trace_replayBlockTransactions", os.ModePerm)
+	fetchTraceReplayBlock(StartBlkNoAfterShanghai, 10)
 	//
-	//os.Mkdir("txs", os.ModePerm)
-	//fetchTransaction(StartBlkNo3, 10)
+	os.Mkdir("txs", os.ModePerm)
+	fetchTransaction(StartBlkNoAfterShanghai, 10)
 	//
-	//os.Mkdir("trace_transaction", os.ModePerm)
-	//fetchTraceTransaction()
+	os.Mkdir("trace_transaction", os.ModePerm)
+	fetchTraceTransaction()
 	//
-	//os.Mkdir("trace_replayTransaction", os.ModePerm)
-	//fetchTraceReplayTransaction()
+	os.Mkdir("trace_replayTransaction", os.ModePerm)
+	fetchTraceReplayTransaction()
 	//
-	//os.Mkdir("trace_call", os.ModePerm)
-	//
-	//os.Mkdir("trace_get", os.ModePerm)
-	//fetchTraceGet(100, 10)
+	os.Mkdir("trace_call", os.ModePerm)
 
-	//os.Mkdir("trace_filter", os.ModePerm)
-	//fetchTraceFilter(StartBlkNo3, 10)
+	os.Mkdir("trace_get", os.ModePerm)
+	fetchTraceGet(100, 10)
+
+	os.Mkdir("trace_filter", os.ModePerm)
+	fetchTraceFilter(StartBlkNo3, 10)
 
 	//os.Mkdir("trace_call", os.ModePerm)
 	//fetchTraceCall(StartBlkNo4, 10)
