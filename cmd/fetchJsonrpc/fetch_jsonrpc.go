@@ -22,10 +22,11 @@ import (
 )
 
 const (
-	StartBlkNo1 = 0x10
-	StartBlkNo2 = 0x10000
-	StartBlkNo3 = 0x832087
-	StartBlkNo4 = 0x85373a
+	StartBlkNo1             = 0x10
+	StartBlkNo2             = 0x10000
+	StartBlkNo3             = 0x832087
+	StartBlkNo4             = 0x85373a
+	StartBlkNoAfterShanghai = 0x85373a
 
 	BlkRange = 100
 )
@@ -39,7 +40,7 @@ var EvmtestBin = "0x6080604052600060015534801561001557600080fd5b5033600080610100
 var (
 	alchemyUrl              = "https://eth-goerli.g.alchemy.com/v2/docs-demo"
 	nodeRealProdUrl         = "https://eth-goerli.nodereal.io/v1/d32dc1e5d7554d04832cbf8dbda2c0ff"
-	nodeRealQaUrl           = "https://eth-goerli.nodereal.cc/v1/ecc862a9bc184c96aee07608da9f342f"
+	nodeRealQaUrl           = "https://eth-goerli.nodereal.cc/v1/d9fa5c156a3c4102a55af9e97f6eb88f"
 	clientAlchemy, _        = jsonrpc.NewClient(jsonrpc.WithURLEndpoint("alchemy_goerli", []string{alchemyUrl}))
 	clientNodeReal, _       = jsonrpc.NewClient(jsonrpc.WithURLEndpoint("nodereal_goerli", []string{nodeRealProdUrl}))
 	clientNodeRealTracer, _ = jsonrpc.NewClient(jsonrpc.WithURLEndpoint("nodereal_goerli", []string{nodeRealQaUrl}))
@@ -167,17 +168,18 @@ func main() {
 	//os.Mkdir("trace_filter", os.ModePerm)
 	//fetchTraceFilter(StartBlkNo3, 10)
 
-	os.Mkdir("trace_call", os.ModePerm)
-	fetchTraceCall(StartBlkNo4, 10)
+	//os.Mkdir("trace_call", os.ModePerm)
+	//fetchTraceCall(StartBlkNo4, 10)
 
-	//validateJsonRpc([]string{
-	//	"trace_block",
-	//	"trace_replayBlockTransactions",
-	//	"trace_transaction",
-	//	"trace_replayTransaction",
-	//	"trace_get",
-	//	"trace_filter",
-	//})
+	validateJsonRpc([]string{
+		"trace_block",
+		"trace_replayBlockTransactions",
+		"trace_transaction",
+		"trace_replayTransaction",
+		"trace_get",
+		"trace_filter",
+		"trace_call",
+	})
 
 }
 
@@ -219,7 +221,7 @@ func validateJsonRpc(folders []string) {
 				continue
 			}
 
-			respAct, err := clientAlchemy.Call(context.Background(), content.Req, jsonrpc.CallWithHeader(hdr))
+			respAct, err := clientNodeRealTracer.Call(context.Background(), content.Req, jsonrpc.CallWithHeader(hdr))
 			if err != nil {
 				fmt.Println(err.Error())
 				errPath = append(errPath, pth)
