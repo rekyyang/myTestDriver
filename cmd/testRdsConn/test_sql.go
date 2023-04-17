@@ -39,7 +39,7 @@ func main() {
 		fmt.Printf("create routine %d", i)
 		go func() {
 			defer wg.Done()
-			for j := 0; j < 100000000; j++ {
+			for {
 				var item struct {
 					BlockNumber uint64 `gorm:"column:block_number"`
 				}
