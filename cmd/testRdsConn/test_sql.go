@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -31,14 +32,26 @@ func main() {
 	// 设置连接最大寿命
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
-	var item struct {
-		BlockNumber uint64 `gorm:"column:block_number"`
+	wg := sync.WaitGroup{}
+
+	for i := 0; i < 100; i++ {
+		wg.Add(1)
+		fmt.Printf("create routine %d", i)
+		go func() {
+			defer wg.Done()
+			for j := 0; j < 100000000; j++ {
+				var item struct {
+					BlockNumber uint64 `gorm:"column:block_number"`
+				}
+				// select * from pancake_txs limit 1;
+				if err := db.Table("v3_transaction").Limit(1).Scan(&item).Error; err != nil {
+					fmt.Println(err.Error())
+				}
+				time.Sleep(10 * time.Millisecond)
+			}
+		}()
 	}
-	// select * from pancake_txs limit 1;
-	if err := db.Table("v3_transaction").Limit(1).Scan(&item).Error; err != nil {
-		fmt.Println(err.Error())
-	}
-	fmt.Println(item)
+	wg.Wait()
 
 	defer sqlDB.Close()
 }
