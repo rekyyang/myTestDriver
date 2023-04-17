@@ -8,7 +8,7 @@ import (
 
 func main() {
 	svc := gin.New()
-	svc.GET("/v1/:prefix/*suffix", func(context *gin.Context) {
+	svc.GET("/:prefix/*suffix", func(context *gin.Context) {
 		context.JSON(http.StatusOK, struct {
 			V string
 			W string

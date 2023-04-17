@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"os"
 	"path"
 	"strconv"
@@ -123,8 +124,9 @@ type RPCTransaction struct {
 }
 
 type Content struct {
-	Req *jsonrpc.Request
-	Rsp *jsonrpc.Response
+	Req   *jsonrpc.Request
+	Rsp   *jsonrpc.Response
+	RspNr *jsonrpc.Response
 }
 
 type Block struct {
@@ -145,45 +147,48 @@ type TraceFilterRequest struct {
 }
 
 func main() {
-	os.Mkdir("trace_block", os.ModePerm)
-	fetchTraceBlock(StartBlkNoAfterShanghai, BlkRange)
-	//
-	os.Mkdir("trace_replayBlockTransactions", os.ModePerm)
-	fetchTraceReplayBlock(StartBlkNoAfterShanghai, 10)
-	//
-	os.Mkdir("txs", os.ModePerm)
-	fetchTransaction(StartBlkNoAfterShanghai, 10)
-	//
-	os.Mkdir("trace_transaction", os.ModePerm)
-	fetchTraceTransaction()
-	//
-	os.Mkdir("trace_replayTransaction", os.ModePerm)
-	fetchTraceReplayTransaction()
-	//
-	os.Mkdir("trace_call", os.ModePerm)
-
-	os.Mkdir("trace_get", os.ModePerm)
-	fetchTraceGet(100, 10)
-
-	os.Mkdir("trace_filter", os.ModePerm)
-	fetchTraceFilter(StartBlkNoAfterShanghai, 10)
-
+	//os.Mkdir("trace_block", os.ModePerm)
+	//fetchTraceBlock(StartBlkNoAfterShanghai, BlkRange)
+	////
+	//os.Mkdir("trace_replayBlockTransactions", os.ModePerm)
+	//fetchTraceReplayBlock(StartBlkNoAfterShanghai, 10)
+	////
+	//os.Mkdir("txs", os.ModePerm)
+	//fetchTransaction(StartBlkNoAfterShanghai, 10)
+	////
+	//os.Mkdir("trace_transaction", os.ModePerm)
+	//fetchTraceTransaction()
+	////
+	//os.Mkdir("trace_replayTransaction", os.ModePerm)
+	//fetchTraceReplayTransaction()
+	////
 	//os.Mkdir("trace_call", os.ModePerm)
-	//fetchTraceCall(StartBlkNo4, 10)
+	//
+	//os.Mkdir("trace_get", os.ModePerm)
+	//fetchTraceGet(100, 10)
+	//
 
+	os.Mkdir("trace_call", os.ModePerm)
+	//fetchTraceCall(StartBlkNo4, 10)
+	//fetchTraceCall2(StartBlkNo4, 10)
+
+	//os.Mkdir("trace_filter", os.ModePerm)
+	//fetchTraceFilter(StartBlkNoAfterShanghai, 10)
+
+	os.Mkdir("validate_result", os.ModePerm)
 	validateJsonRpc([]string{
 		"trace_block",
 		"trace_replayBlockTransactions",
 		"trace_transaction",
 		"trace_replayTransaction",
 		"trace_get",
-		"trace_filter",
 		"trace_call",
-	})
+		"trace_filter",
+	}, 100)
 
 }
 
-func validateJsonRpc(folders []string) {
+func validateJsonRpc(folders []string, length int) {
 	failedPath := make([]string, 0)
 	errPath := make([]string, 0)
 
@@ -195,7 +200,19 @@ func validateJsonRpc(folders []string) {
 		if err != nil {
 			panic(err.Error())
 		}
+		count := 0
+		rand.Seed(time.Now().Unix())
+
+		// 打乱数组
+		//rand.Shuffle(len(files), func(i, j int) {
+		//	files[i], files[j] = files[j], files[i]
+		//})
+
 		for _, file := range files {
+			if count >= length {
+				break
+			}
+			count++
 			pth := path.Join(folder, file.Name())
 			fp, err := os.Open(pth)
 			if err != nil {
@@ -231,6 +248,7 @@ func validateJsonRpc(folders []string) {
 			rawRespAct, _ := jsoniter.MarshalToString(respAct)
 			if rawRespExp != rawRespAct {
 				failedPath = append(failedPath, pth)
+				writeReqRespNr("./validate_result/"+generateFileName(content.Req), content.Req, content.Rsp, respAct)
 				fmt.Printf("failed case : %s\n", pth)
 			} else {
 				fmt.Printf("passed case : %s\n", pth)
@@ -457,6 +475,10 @@ func fetchTraceFilter(bnStart, bnRange int) {
 	var hdr = make(map[string]string)
 	hdr["Origin"] = "https://docs.alchemy.com"
 
+	var fromAddresses []*common.Address
+	var toAddresses []*common.Address
+	modes := []string{"intersection", "union"}
+
 	//blks := make([]*types.Block, 0)
 	txs := make([]*RPCTransaction, 0)
 	for bn := bnStart; bn <= bnStart+bnRange; bn++ {
@@ -483,8 +505,11 @@ func fetchTraceFilter(bnStart, bnRange int) {
 			//rpcTx := RPCTransaction{}
 			//jsoniter.Unmarshal(respTx.Result, &rpcTx)
 			txs = append(txs, &tx)
+			fromAddresses = append(fromAddresses, &tx.From)
+			toAddresses = append(toAddresses, tx.To)
 		}
 	}
+	totalTxs := len(txs)
 
 	// full
 	{
@@ -598,6 +623,40 @@ func fetchTraceFilter(bnStart, bnRange int) {
 		writeReqResp(fn, req, resp)
 		time.Sleep(200 * time.Millisecond)
 	}
+
+	// 初始化随机数种子
+	rand.Seed(time.Now().UnixNano())
+	// random params
+	for i := 0; i < 200; i++ {
+		from_ := make([]*common.Address, 0)
+		to_ := make([]*common.Address, 0)
+		for i := 0; i < rand.Int()%10; i++ {
+			from_ = append(from_, fromAddresses[rand.Int()%totalTxs])
+			to_ = append(to_, toAddresses[rand.Int()%totalTxs])
+		}
+
+		fromBlk := hexutil.Uint64(bnStart)
+		toBlk := hexutil.Uint64(bnStart + bnRange)
+		count := uint64(rand.Int() % totalTxs)
+		after := uint64(rand.Int() % totalTxs)
+		filterReq := &TraceFilterRequest{
+			FromBlock:   &fromBlk,
+			ToBlock:     &toBlk,
+			Mode:        TraceFilterMode(modes[rand.Int()%2]),
+			FromAddress: from_,
+			ToAddress:   to_,
+			Count:       &count,
+			After:       &after,
+		}
+		req := jsonrpc.NewRequest(114514, method, filterReq)
+		fn := generateFileName(req)
+		resp, err := clientAlchemy.Call(context.Background(), req, jsonrpc.CallWithHeader(hdr))
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+		writeReqResp(fn, req, resp)
+		time.Sleep(200 * time.Millisecond)
+	}
 }
 
 func fetchTraceCall(bnStart, bnRange int) {
@@ -637,6 +696,61 @@ func fetchTraceCall(bnStart, bnRange int) {
 			writeReqResp(fn, req, resp)
 			time.Sleep(200 * time.Millisecond)
 		}
+	}
+}
+
+func fetchTraceCall2(bnStart, bnRange int) {
+	method := "trace_call"
+	var hdr = make(map[string]string)
+	hdr["Origin"] = "https://docs.alchemy.com"
+
+	//blks := make([]*types.Block, 0)
+	txs := make([]*RPCTransaction, 0)
+	for bn := bnStart; bn <= bnStart+bnRange; bn++ {
+		bn := hexutil.Uint64(bn).String()
+		blk_ := RealBlock{}
+		req := jsonrpc.NewRequest(bn, "eth_getBlockByNumber", bn, true)
+		resp, err := clientNodeRealTracer.Call(context.Background(), req, jsonrpc.CallWithHeader(hdr))
+		if err != nil {
+			fmt.Println(err.Error())
+			continue
+		}
+		err = json.Unmarshal(resp.Result, &blk_)
+		if err != nil {
+			panic(err.Error())
+		}
+		//blk := types.NewBlockWithHeader(blk_)
+		for _, tx := range blk_.Txs {
+			tx_ := tx
+			if tx.Type != 0 && tx.Type != 4 {
+				txs = append(txs, &tx_)
+			}
+		}
+	}
+	totalTxs := len(txs)
+
+	rand.Seed(time.Now().UnixNano())
+	gas := hexutil.Uint64(5000000)
+	fmt.Println(totalTxs)
+	for i := 0; i < 2000; i++ {
+		//tx := txs[rand.Int()%totalTxs]
+		tx := txs[i]
+		callBody := TransactionArgs{
+			From: &tx.From,
+			To:   tx.To,
+			Data: &tx.Input,
+			Gas:  &gas,
+		}
+		hx := "0x" + strconv.FormatInt(tx.BlockNumber.ToInt().Int64(), 16)
+		req := jsonrpc.NewRequest(114515, method, callBody, []string{"trace", "stateDiff"}, hx)
+		fn := generateFileName(req)
+		resp, err := clientAlchemy.Call(context.Background(), req, jsonrpc.CallWithHeader(hdr))
+		if err != nil {
+			fmt.Println(err.Error())
+			continue
+		}
+		writeReqResp(fn, req, resp)
+		time.Sleep(200 * time.Millisecond)
 	}
 }
 
@@ -694,6 +808,14 @@ func writeReqResp(fileName string, req *jsonrpc.Request, resp *jsonrpc.Response)
 	writeJson(fileName, Content{
 		Req: req,
 		Rsp: resp,
+	})
+}
+
+func writeReqRespNr(fileName string, req *jsonrpc.Request, resp *jsonrpc.Response, respNr *jsonrpc.Response) {
+	writeJson(fileName, Content{
+		Req:   req,
+		Rsp:   resp,
+		RspNr: respNr,
 	})
 }
 
