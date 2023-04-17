@@ -33,7 +33,7 @@ func main() {
 
 	// select * from pancake_txs limit 1;
 	var item interface{}
-	if err := db.Table("pancake_txs").Limit(1).Scan(&item).Error; err != nil {
+	if err := db.Table("v3_transaction").Limit(1).Scan(&item).Error; err != nil {
 		fmt.Println(err.Error())
 	}
 
