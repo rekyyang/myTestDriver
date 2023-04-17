@@ -30,7 +30,7 @@ func main() {
 	sqlDB.SetMaxIdleConns(10)
 
 	// 设置连接最大寿命
-	sqlDB.SetConnMaxLifetime(time.Hour)
+	sqlDB.SetConnMaxLifetime(time.Second * 10)
 
 	wg := sync.WaitGroup{}
 
