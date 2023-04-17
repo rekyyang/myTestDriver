@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	DSN = "bijieprd:sFOUsoMtvrWIKp9ppjYR@tcp(tf-nodereal-qa-dataplatform-db-db.cluster-cb6vaj1ctcqk.us-east-1.rds.amazonaws.com:3306)/uniswapv3?parseTime=true&multiStatements=true&loc=Local"
+	DSN = "bijieprd:sFOUsoMtvrWIKp9ppjYR@tcp(tf-nodereal-qa-dataplatform-db-db.cluster-ro-cb6vaj1ctcqk.us-east-1.rds.amazonaws.com:3306)/uniswapv3?parseTime=true&multiStatements=true&loc=Local"
 )
 
 func main() {
