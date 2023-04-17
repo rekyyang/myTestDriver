@@ -34,7 +34,7 @@ func main() {
 
 	wg := sync.WaitGroup{}
 
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 1000; i++ {
 		wg.Add(1)
 		fmt.Printf("create routine %d", i)
 		go func() {
