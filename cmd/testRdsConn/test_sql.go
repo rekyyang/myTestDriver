@@ -31,11 +31,14 @@ func main() {
 	// 设置连接最大寿命
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
+	var item struct {
+		BlockNumber uint64 `gorm:"column:block_number"`
+	}
 	// select * from pancake_txs limit 1;
-	var item interface{}
 	if err := db.Table("v3_transaction").Limit(1).Scan(&item).Error; err != nil {
 		fmt.Println(err.Error())
 	}
+	fmt.Println(item)
 
 	defer sqlDB.Close()
 }
