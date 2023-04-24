@@ -96,6 +96,9 @@ func testDb(dsn string, iterNum int, label string) {
 }
 
 func main() {
-	testDb(DSN4X, 1, "4x")
-	testDb(DSN8X, 1, "8x")
+	//testDb(DSN4X, 1, "4x")
+	//testDb(DSN8X, 1, "8x")
+
+	fmt.Println(time.Until(time.Now().Add(time.Minute)))
+	fmt.Println(time.Since(time.Now().Add(time.Minute)))
 }

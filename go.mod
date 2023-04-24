@@ -5,10 +5,9 @@ go 1.18
 require (
 	github.com/ethereum/go-ethereum v1.11.5
 	github.com/gin-gonic/gin v1.8.1
-	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/json-iterator/go v1.1.12
-	github.com/node-real/blocktree v0.0.0-20230329050518-4cedf4633aa0
+	github.com/node-real/blocktree v0.0.0-20230419072908-fee3ee7c9cb3
 	github.com/node-real/go-pkg v0.0.6-0.20230327033024-188365c67840
 	github.com/node-real/rpc-ap v0.0.0-20230404065159-2eac1fd1f443
 	github.com/prometheus/client_golang v1.14.0

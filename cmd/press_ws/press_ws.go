@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"fmt"
 	"log"
 	"math/rand"
@@ -24,9 +25,22 @@ const (
 )
 
 func main() {
-	for {
-		process()
+	encoded := "iAA="
+	decoded, err := base64.StdEncoding.DecodeString(encoded)
+	if err != nil {
+		fmt.Println("Error decoding base64:", err.Error())
+		return
 	}
+
+	fmt.Println("Decoded:", decoded)
+	fmt.Println()
+}
+
+func main1() {
+	//for {
+	//	process()
+	//}
+
 }
 
 func process() {

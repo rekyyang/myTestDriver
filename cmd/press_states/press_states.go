@@ -42,7 +42,7 @@ const (
     "jsonrpc": "2.0",
     "method": "trace_block",
     "params": [
-        "0x86b85c"
+        "0x87b85c"
     ],
     "id": 8778611
 }
@@ -118,22 +118,37 @@ func main() {
 		wg.Add(2)
 		rand.Seed(time.Now().Unix())
 		go func() {
-			bn := 0x85f355 + rand.Int()%1000
+			bn := 8830000 + rand.Int()%20000
+			//bn = 0x87272b
 			fmt.Println(hexutil.EncodeUint64(uint64(bn)))
-			req := jsonrpc.NewRequest(114514, "trace_block", hexutil.EncodeUint64(uint64(bn)))
-			client.Call(context.Background(), req)
+			//req := jsonrpc.NewRequest(114514, "trace_block", hexutil.EncodeUint64(uint64(bn)))
+			//req := jsonrpc.NewRequest(114514, "trace_filter", struct {
+			//	FromBlock string
+			//	ToBlock   string
+			//}{
+			//	FromBlock: hexutil.EncodeUint64(uint64(bn)),
+			//	ToBlock:   hexutil.EncodeUint64(uint64(bn + 10)),
+			//})
+			req := jsonrpc.NewRequest(114514, "trace_replayBlockTransactions", hexutil.EncodeUint64(uint64(bn)), []string{"vmTrace"})
+			//fmt.Println(hexutil.EncodeUint64(uint64(bn)))
+			//req := jsonrpc.NewRequest(114514, "trace_block", hexutil.EncodeUint64(uint64(bn)), []string{"trace", "stateDiff"})
+			resp, err := client.Call(context.Background(), req)
+			_, _ = resp, err
+			//fmt.Println(resp)
+			//fmt.Println(err)
 			wg.Done()
 		}()
 
-		go func() {
-			resp, err := client.Call(context.Background(), req2)
-			//raw, _ := resp.MarshalJSON()
-			//fmt.Printf("resp %s\n", raw)
-			//fmt.Println(err)
-			_, _ = resp, err
-			wg.Done()
-		}()
-		time.Sleep(500 * time.Millisecond)
+		_ = req2
+		//go func() {
+		//	resp, err := client.Call(context.Background(), req2)
+		//	//raw, _ := resp.MarshalJSON()
+		//	//fmt.Printf("resp %s\n", raw)
+		//	//fmt.Println(err)
+		//	_, _ = resp, err
+		//	wg.Done()
+		//}()
+		time.Sleep(1000 * time.Millisecond)
 	}
 	wg.Wait()
 }
