@@ -85,10 +85,13 @@ func ComparePrestates(pExp, pAct *Prestates) {
 		}
 	}
 
-	fmt.Println("addr 1")
+	fmt.Println()
+	fmt.Println()
+	fmt.Println("=========addr 1==========")
 	fmt.Println(r1)
-	fmt.Println("addr 1")
+	fmt.Println("=========addr 2==========")
 	fmt.Println(r2)
+	fmt.Println("=========================")
 
 	for k, v1 := range pExp.AccountPrestateMap {
 		addr := hexutil.Encode(k[:])
@@ -105,4 +108,5 @@ func ComparePrestates(pExp, pAct *Prestates) {
 			}
 		}
 	}
+	fmt.Println("=========================")
 }
