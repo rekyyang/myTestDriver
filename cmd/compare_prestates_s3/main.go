@@ -6,7 +6,6 @@ import (
 	"time"
 
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/rlp"
 	jsoniter "github.com/json-iterator/go"
@@ -92,18 +91,19 @@ func (c *Comparer) GetLatestBlockKey() string {
 
 func (c *Comparer) Run() {
 	// go func() {
-		for {
-			key := c.GetLatestBlockKey()
-			if key == "" {
-				continue
-			}
-
-			err := c.Compare(key)
-			if err != nil {
-				continue
-			}
-			time.Sleep(3 * time.Second)
+	for {
+		key := c.GetLatestBlockKey()
+		fmt.Println(key)
+		if key == "" {
+			continue
 		}
+
+		err := c.Compare(key)
+		if err != nil {
+			continue
+		}
+		time.Sleep(3 * time.Second)
+	}
 	// }()
 }
 
