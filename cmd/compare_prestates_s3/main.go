@@ -14,7 +14,7 @@ import (
 )
 
 const URL1 = "https://bsc-mainnet.nodereal.io/v1/4e7dd5235d434c5a837f7e48e9af9b4d"
-const URL2 = "http://coordinator-nodereal-app.rpc-bsc-mainnet:8545"
+const URL2 = "http://10.73.228.48:8545"
 
 var _ = s3.Client{}
 
@@ -91,7 +91,7 @@ func (c *Comparer) GetLatestBlockKey() string {
 }
 
 func (c *Comparer) Run() {
-	go func() {
+	// go func() {
 		for {
 			key := c.GetLatestBlockKey()
 			if key == "" {
@@ -104,7 +104,7 @@ func (c *Comparer) Run() {
 			}
 			time.Sleep(3 * time.Second)
 		}
-	}()
+	// }()
 }
 
 func main() {
