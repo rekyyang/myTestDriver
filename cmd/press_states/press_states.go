@@ -108,32 +108,49 @@ func main1() {
 func main() {
 	client, _ := jsonrpc.NewClient(jsonrpc.WithURLEndpoint("test", []string{epErigonTracer}))
 	//req := jsonrpc.NewRequest(114514, "trace_block", "0x85f355")
-	req2 := jsonrpc.NewRequest(114514, "debug_traceBlockByNumber", "0x85f355", struct {
-		Tracer string
-	}{
-		Tracer: "callTracer",
-	})
+	//req2 := jsonrpc.NewRequest(114514, "debug_traceBlockByNumber", "0x85f355", struct {
+	//	Tracer string
+	//}{
+	//	Tracer: "callTracer",
+	//})
 	wg := sync.WaitGroup{}
+	rand.Seed(time.Now().Unix())
 	for i := 0; i < 1000000; i++ {
 		wg.Add(2)
-		rand.Seed(time.Now().Unix())
 		go func() {
-			bn := 0x85f355 + rand.Int()%1000
+			bn := 0x87cc53 - rand.Uint64()%5000
 			fmt.Println(hexutil.EncodeUint64(uint64(bn)))
-			req := jsonrpc.NewRequest(114514, "trace_block", hexutil.EncodeUint64(uint64(bn)))
-			client.Call(context.Background(), req)
+			req1 := jsonrpc.NewRequest(114514,
+				"trace_replayBlockTransactions",
+				hexutil.EncodeUint64(uint64(bn)), []string{"trace"})
+			_ = req1
+
+			req2 := jsonrpc.NewRequest(114514,
+				"trace_replayBlockTransactions",
+				hexutil.EncodeUint64(uint64(bn)), []string{"trace", "stateDiff"})
+			_ = req2
+
+			req := jsonrpc.NewRequest(114514, "debug_traceBlockByNumber", hexutil.EncodeUint64(uint64(bn)), struct {
+				Tracer string
+			}{
+				Tracer: "callTracer",
+			})
+			_ = req
+			_, err := client.Call(context.Background(), req2)
+			_ = err
+			//fmt.Println(resp)
 			wg.Done()
 		}()
 
 		go func() {
-			resp, err := client.Call(context.Background(), req2)
+			//resp, err := client.Call(context.Background(), req2)
 			//raw, _ := resp.MarshalJSON()
 			//fmt.Printf("resp %s\n", raw)
 			//fmt.Println(err)
-			_, _ = resp, err
+			//_, _ = resp, err
 			wg.Done()
 		}()
-		time.Sleep(500 * time.Millisecond)
+		time.Sleep(50 * time.Millisecond)
 	}
 	wg.Wait()
 }
