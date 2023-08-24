@@ -105,6 +105,8 @@ func (c *Comparer) GetLatestBlockKey() string {
 		fmt.Println(fmt.Sprintf("failed to unmarshal blk: %s", err.Error()))
 		return ""
 	}
+
+	fmt.Println(blk)
 	bn, _ := hexutil.DecodeUint64(blk.BlockNumber)
 	return fmt.Sprintf("%010d_%s", bn, blk.Hash)
 }
