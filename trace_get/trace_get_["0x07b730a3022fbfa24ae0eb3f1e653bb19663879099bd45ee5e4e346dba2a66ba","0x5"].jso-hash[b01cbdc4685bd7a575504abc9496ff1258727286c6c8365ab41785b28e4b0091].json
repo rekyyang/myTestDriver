@@ -1,1 +1,0 @@
-{"Req":{"jsonrpc":"2.0","method":"trace_get","params":["0x07b730a3022fbfa24ae0eb3f1e653bb19663879099bd45ee5e4e346dba2a66ba","0x5"],"id":"114514"},"Rsp":{"jsonrpc":"2.0","id":"114514","error":{"code":-32602,"message":"invalid argument 1: json: cannot unmarshal string into Go value of type []hexutil.Uint64"}}}
