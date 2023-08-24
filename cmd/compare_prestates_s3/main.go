@@ -6,7 +6,6 @@ import (
 	"time"
 
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/rlp"
 	jsoniter "github.com/json-iterator/go"
@@ -108,7 +107,7 @@ func (c *Comparer) Run() {
 }
 
 func main() {
-	s3cfg, err := awsconfig.LoadDefaultConfig(context.Background(), awsconfig.WithRegion("us-east-1"))
+	s3cfg, err := awsconfig.LoadDefaultConfig(context.Background(), awsconfig.WithRegion("ap-northeast-1"))
 	if err != nil {
 		panic(fmt.Errorf("load s3 config failed, err:%s", err.Error()))
 	}
