@@ -100,6 +100,7 @@ func (c *Comparer) Run() {
 
 		err := c.Compare(key)
 		if err != nil {
+			fmt.Println(err.Error())
 			continue
 		}
 		time.Sleep(3 * time.Second)
