@@ -89,7 +89,7 @@ func ComparePrestates(pExp, pAct *Prestates) {
 	fmt.Println(r1)
 	fmt.Println("=========addr 2==========")
 	fmt.Println(r2)
-	fmt.Println("=========================")
+	fmt.Println("======storage diff=======")
 
 	for k, v1 := range pExp.AccountPrestateMap {
 		addr := hexutil.Encode(k[:])
