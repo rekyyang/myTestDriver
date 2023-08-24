@@ -120,7 +120,7 @@ func main() {
 	}
 	cmper := Comparer{
 		S3Cli:     s3.NewFromConfig(s3cfg),
-		Bucket:    "tf-nodereal-prod-meganode-tracer-cache-us",
+		Bucket:    "tf-nodereal-prod-meganode-tracer-cache-ap",
 		ExpFolder: "bsc-mainnet-prestate",
 		ActFolder: "bsc-mainnet-prestate-test",
 		RpcCli:    rpcCli,
