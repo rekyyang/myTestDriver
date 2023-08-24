@@ -6,6 +6,7 @@ import (
 	"time"
 
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/rlp"
 	jsoniter "github.com/json-iterator/go"
@@ -14,6 +15,8 @@ import (
 
 const URL1 = "https://bsc-mainnet.nodereal.io/v1/4e7dd5235d434c5a837f7e48e9af9b4d"
 const URL2 = "http://coordinator-nodereal-app.rpc-bsc-mainnet:8545"
+
+var _ = s3.Client{}
 
 type Comparer struct {
 	S3Cli     *s3.Client
