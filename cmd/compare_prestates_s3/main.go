@@ -100,6 +100,7 @@ func (c *Comparer) GetLatestBlockKey() string {
 		return ""
 	}
 
+	err = jsoniter.Unmarshal(resp.Result, &bnStr)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("failed to unmarshal blk: %s", err.Error()))
 		return ""
