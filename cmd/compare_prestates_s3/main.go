@@ -85,6 +85,12 @@ func (c *Comparer) GetLatestBlockKey() string {
 	err = jsoniter.Unmarshal(resp.Result, &bnStr)
 
 	bnStr = hexutil.EncodeUint64(hexutil.MustDecodeUint64(bnStr) - 10)
+	fmt.Println()
+	fmt.Println()
+	fmt.Println()
+	fmt.Println()
+	fmt.Println()
+	fmt.Println()
 	fmt.Println(fmt.Sprintf("blockNumber : %s", bnStr))
 
 	blk := BlkWithHash{}

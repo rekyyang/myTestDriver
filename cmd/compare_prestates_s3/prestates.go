@@ -85,8 +85,6 @@ func ComparePrestates(pExp, pAct *Prestates) {
 		}
 	}
 
-	fmt.Println()
-	fmt.Println()
 	fmt.Println("=========addr 1==========")
 	fmt.Println(r1)
 	fmt.Println("=========addr 2==========")
