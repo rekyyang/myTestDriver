@@ -70,7 +70,7 @@ func (c *Comparer) Compare(key string) error {
 }
 
 func (c *Comparer) GetLatestBlockKey() string {
-	resp, err := c.RpcCli.Call(context.Background(), jsonrpc.NewRequest("23333", "eth_getBlockByNumber", "latest", false))
+	resp, err := c.RpcCli.Call(context.Background(), jsonrpc.NewRequest("23333", "eth_blockNumber"))
 	if err != nil {
 		fmt.Println(fmt.Sprintf("failed to get latest blk: %s", err.Error()))
 		return ""
@@ -80,8 +80,26 @@ func (c *Comparer) GetLatestBlockKey() string {
 		fmt.Println(fmt.Sprintf("failed to get latest blk: %s", resp.Error.Error()))
 		return ""
 	}
+
+	bnStr := ""
+	err = jsoniter.Unmarshal(resp.Result, &bnStr)
+	fmt.Println(bnStr)
+
+	bnStr = hexutil.EncodeUint64(hexutil.MustDecodeUint64(bnStr) - 10)
+
 	blk := BlkWithHash{}
-	err = jsoniter.Unmarshal(resp.Result, &blk)
+
+	resp, err = c.RpcCli.Call(context.Background(), jsonrpc.NewRequest("23334", "eth_getBlockByNumber", bnStr, false))
+	if err != nil {
+		fmt.Println(fmt.Sprintf("failed to get latest blk: %s", err.Error()))
+		return ""
+	}
+
+	if resp.Error != nil {
+		fmt.Println(fmt.Sprintf("failed to get latest blk: %s", resp.Error.Error()))
+		return ""
+	}
+
 	if err != nil {
 		fmt.Println(fmt.Sprintf("failed to unmarshal blk: %s", err.Error()))
 		return ""
