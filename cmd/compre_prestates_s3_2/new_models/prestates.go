@@ -1,4 +1,4 @@
-package main
+package new_models
 
 import (
 	"fmt"
@@ -85,11 +85,11 @@ func ComparePrestates(pExp, pAct *Prestates) {
 		}
 	}
 
-	fmt.Println("=========addr 1==========")
+	fmt.Println("=========gat evm addr 1==========")
 	fmt.Println(r1)
-	fmt.Println("=========addr 2==========")
+	fmt.Println("============evm addr 2===========")
 	fmt.Println(r2)
-	fmt.Println("======storage diff=======")
+	fmt.Println("============storage diff=========")
 
 	for k, v1 := range pExp.AccountPrestateMap {
 		addr := hexutil.Encode(k[:])
