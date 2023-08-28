@@ -85,13 +85,16 @@ func (c *Comparer) Compare(key, keyOld string) error {
 		return err
 	}
 
-	fmt.Println("====================================")
+	fmt.Println()
+	fmt.Println("=========1 pActGat pActEvm===========")
 	new_models.ComparePrestates(&pActGat, &pActEvm)
-	fmt.Println("=============pExp pActEvm===========")
+	fmt.Println()
+	fmt.Println("=========2 pExp pActEvm==============")
 	ComparePrestatesV2(&pExp, &pActEvm)
-	fmt.Println("=============pExp pActGat===========")
+	fmt.Println()
+	fmt.Println("=========3 pExp pActGat==============")
 	ComparePrestatesV2(&pExp, &pActGat)
-	fmt.Println("====================================")
+	fmt.Println("=====================================")
 	fmt.Println()
 	fmt.Println()
 	fmt.Println()
