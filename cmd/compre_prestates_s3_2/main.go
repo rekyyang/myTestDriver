@@ -198,22 +198,22 @@ func ComparePrestatesV2(pExp *old_models.Prestates, pAct *new_models.Prestates, 
 	for k, v := range pExp.AccountPrestateMap {
 		if _, ok := pAct.AccountPrestateMap[k]; !ok {
 			r1[hexutil.Encode(k[:])] = struct{}{}
-			Storage := "no Storage"
-			if v.Storages != nil && len(v.Storages) != 0 {
-				Storage = "has Storage"
+			storage := "no storage"
+			if v.Storages != nil || len(v.Storages) != 0 {
+				storage = "has storage"
 			}
-			fmt.Println(fmt.Sprintf("dbug bn[%d], addr[%s] [%s], pAct miss content[%v]", bn, hexutil.Encode(k[:]), Storage, v))
+			fmt.Println(fmt.Sprintf("dbug bn[%d], addr[%s] [%s], pAct miss content[%v]", bn, hexutil.Encode(k[:]), storage, v))
 		}
 	}
 
 	for k, v := range pAct.AccountPrestateMap {
 		if _, ok := pExp.AccountPrestateMap[k]; !ok {
 			r2[hexutil.Encode(k[:])] = struct{}{}
-			Storage := "no Storage"
-			if v.Storages != nil && len(v.Storages) != 0 {
-				Storage = "has Storage"
+			storage := "no storage"
+			if v.Storages != nil || len(v.Storages) != 0 {
+				storage = "has storage"
 			}
-			fmt.Println(fmt.Sprintf("dbug bn[%d], addr[%s] [%s], pExp miss content[%v]", bn, hexutil.Encode(k[:]), Storage, v))
+			fmt.Println(fmt.Sprintf("dbug bn[%d], addr[%s] [%s], pExp miss content[%v]", bn, hexutil.Encode(k[:]), storage, v))
 		}
 	}
 
