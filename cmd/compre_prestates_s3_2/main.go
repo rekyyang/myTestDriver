@@ -36,10 +36,10 @@ type BlkWithHash struct {
 	BlockNumber string
 }
 
-func (c *Comparer) Compare(key string) error {
+func (c *Comparer) Compare(key, keyOld string) error {
 	keyActEvm := fmt.Sprintf("%s/%s", c.ActFolderEvm, key)
 	keyActGat := fmt.Sprintf("%s/%s", c.ActFolderGat, key)
-	keyExp := fmt.Sprintf("%s/%s", c.ExpFolder, key)
+	keyExp := fmt.Sprintf("%s/%s", c.ExpFolder, keyOld)
 
 	objActEvm, err := c.S3Cli.GetObject(context.Background(), &s3.GetObjectInput{
 		Bucket: &c.ActBucket,
@@ -98,16 +98,16 @@ func (c *Comparer) Compare(key string) error {
 	return nil
 }
 
-func (c *Comparer) GetLatestBlockKey() string {
+func (c *Comparer) GetLatestBlockKey() (string, string) {
 	resp, err := c.RpcCli.Call(context.Background(), jsonrpc.NewRequest("23333", "eth_blockNumber"))
 	if err != nil {
 		fmt.Println(fmt.Sprintf("failed to get latest blk: %s", err.Error()))
-		return ""
+		return "", ""
 	}
 
 	if resp.Error != nil {
 		fmt.Println(fmt.Sprintf("failed to get latest blk: %s", resp.Error.Error()))
-		return ""
+		return "", ""
 	}
 
 	bnStr := ""
@@ -127,35 +127,35 @@ func (c *Comparer) GetLatestBlockKey() string {
 	resp, err = c.RpcCli.Call(context.Background(), jsonrpc.NewRequest("23334", "eth_getBlockByNumber", bnStr, false))
 	if err != nil {
 		fmt.Println(fmt.Sprintf("failed to get latest blk: %s", err.Error()))
-		return ""
+		return "", ""
 	}
 
 	if resp.Error != nil {
 		fmt.Println(fmt.Sprintf("failed to get latest blk: %s", resp.Error.Error()))
-		return ""
+		return "", ""
 	}
 
 	err = jsoniter.Unmarshal(resp.Result, &blk)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("failed to unmarshal blk: %s", err.Error()))
-		return ""
+		return "", ""
 	}
 
 	fmt.Println(blk)
 	bn, _ := hexutil.DecodeUint64(bnStr)
-	return fmt.Sprintf("%010d_%s", bn, blk.Hash)
+	return fmt.Sprintf("%010d_%s", bn, blk.Hash), fmt.Sprintf("%d_%s", bn, blk.Hash)
 }
 
 func (c *Comparer) Run() {
 	// go func() {
 	for {
-		key := c.GetLatestBlockKey()
+		key, keyOld := c.GetLatestBlockKey()
 		fmt.Println(key)
 		if key == "" {
 			continue
 		}
 
-		err := c.Compare(key)
+		err := c.Compare(key, keyOld)
 		if err != nil {
 			fmt.Println(err.Error())
 			continue
