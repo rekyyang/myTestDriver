@@ -143,6 +143,8 @@ func (c *Comparer) GetLatestBlockKey() (string, string) {
 
 	fmt.Println(blk)
 	bn, _ := hexutil.DecodeUint64(bnStr)
+	fmt.Println(fmt.Sprintf("key_new %s", fmt.Sprintf("%010d_%s", bn, blk.Hash)))
+	fmt.Println(fmt.Sprintf("key_old %s", fmt.Sprintf("%d_%s", bn, blk.Hash)))
 	return fmt.Sprintf("%010d_%s", bn, blk.Hash), fmt.Sprintf("%d_%s", bn, blk.Hash)
 }
 
