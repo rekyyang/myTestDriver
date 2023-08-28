@@ -102,9 +102,15 @@ func (c *Comparer) Compare(key, keyOld string, bn uint64) error {
 	bts, _ := hexutil.Decode("0x0000000000000000000000000000000000001002")
 	addr := common.Address{}
 	addr.SetBytes(bts)
+	fmt.Println(bn)
 	if _, ok := pExp.AccountPrestateMap[addr]; ok {
-		fmt.Println(bn)
 		fmt.Println("exp has 0x0000000000000000000000000000000000001002")
+	}
+	if _, ok := pActGat.AccountPrestateMap[addr]; ok {
+		fmt.Println("gat has 0x0000000000000000000000000000000000001002")
+	}
+	if _, ok := pActEvm.AccountPrestateMap[addr]; ok {
+		fmt.Println("evm has 0x0000000000000000000000000000000000001002")
 	}
 	return nil
 }
