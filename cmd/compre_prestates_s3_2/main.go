@@ -199,7 +199,7 @@ func ComparePrestatesV2(pExp *old_models.Prestates, pAct *new_models.Prestates, 
 		if _, ok := pAct.AccountPrestateMap[k]; !ok {
 			r1[hexutil.Encode(k[:])] = struct{}{}
 			Storage := "no Storage"
-			if v.Storages == nil {
+			if v.Storages != nil {
 				Storage = "has Storage"
 			}
 			fmt.Println(fmt.Sprintf("dbug bn[%d], addr[%s] [%s], pAct miss content[%v]", bn, hexutil.Encode(k[:]), Storage, v))
@@ -210,7 +210,7 @@ func ComparePrestatesV2(pExp *old_models.Prestates, pAct *new_models.Prestates, 
 		if _, ok := pExp.AccountPrestateMap[k]; !ok {
 			r2[hexutil.Encode(k[:])] = struct{}{}
 			Storage := "no Storage"
-			if v.Storages == nil {
+			if v.Storages != nil {
 				Storage = "has Storage"
 			}
 			fmt.Println(fmt.Sprintf("dbug bn[%d], addr[%s] [%s], pExp miss content[%v]", bn, hexutil.Encode(k[:]), Storage, v))
