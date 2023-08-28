@@ -202,7 +202,8 @@ func ComparePrestatesV2(pExp *old_models.Prestates, pAct *new_models.Prestates, 
 			if len(v.Storages) != 0 {
 				storage = "has storage"
 			}
-			fmt.Println(fmt.Sprintf("dbug bn[%d], addr[%s] [%s], pAct miss content[%v]", bn, hexutil.Encode(k[:]), storage, v))
+			vJson, _ := jsoniter.Marshal(v)
+			fmt.Println(fmt.Sprintf("dbug bn[%d], addr[%s] [%s], pAct miss content[%s]", bn, hexutil.Encode(k[:]), storage, vJson))
 		}
 	}
 
@@ -213,7 +214,8 @@ func ComparePrestatesV2(pExp *old_models.Prestates, pAct *new_models.Prestates, 
 			if len(v.Storages) != 0 {
 				storage = "has storage"
 			}
-			fmt.Println(fmt.Sprintf("dbug bn[%d], addr[%s] [%s], pExp miss content[%v]", bn, hexutil.Encode(k[:]), storage, v))
+			vJson, _ := jsoniter.Marshal(v)
+			fmt.Println(fmt.Sprintf("dbug bn[%d], addr[%s] [%s], pExp miss content[%s]", bn, hexutil.Encode(k[:]), storage, vJson))
 		}
 	}
 
