@@ -103,6 +103,7 @@ func (c *Comparer) Compare(key, keyOld string, bn uint64) error {
 	addr := common.Address{}
 	addr.SetBytes(bts)
 	if _, ok := pExp.AccountPrestateMap[addr]; ok {
+		fmt.Println(bn)
 		fmt.Println("exp has 0x0000000000000000000000000000000000001002")
 	}
 	return nil
