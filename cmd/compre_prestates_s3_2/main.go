@@ -180,8 +180,9 @@ func main() {
 		S3Cli:        s3.NewFromConfig(s3cfg),
 		ActBucket:    "tf-nodereal-prod-meganode-tracer-cache-ap",
 		ExpBucket:    "tf-nodereal-prod-bsc-states-tracer-ap",
-		ExpFolder:    "bsc-mainnet-prestate",
+		ExpFolder:    "bsc_states_tracer_prestate",
 		ActFolderEvm: "bsc-mainnet-prestate-test",
+		ActFolderGat: "bsc-mainnet-prestate",
 		RpcCli:       rpcCli,
 	}
 	cmper.Run()
