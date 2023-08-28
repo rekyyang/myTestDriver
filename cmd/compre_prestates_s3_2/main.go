@@ -203,7 +203,7 @@ func ComparePrestatesV2(pExp *old_models.Prestates, pAct *new_models.Prestates, 
 		}
 	}
 
-	for k, _ := range pAct.AccountPrestateMap {
+	for k, v := range pAct.AccountPrestateMap {
 		if _, ok := pExp.AccountPrestateMap[k]; !ok {
 			r2[hexutil.Encode(k[:])] = struct{}{}
 			fmt.Println(fmt.Sprintf("dbug bn[%d], addr[%s], pExp miss", bn, hexutil.Encode(k[:])))
