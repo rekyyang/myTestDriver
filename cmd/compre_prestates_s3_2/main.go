@@ -36,7 +36,7 @@ type BlkWithHash struct {
 	BlockNumber string
 }
 
-func (c *Comparer) Compare(key, keyOld string) error {
+func (c *Comparer) Compare(key, keyOld string, bn uint64) error {
 	keyActEvm := fmt.Sprintf("%s/%s", c.ActFolderEvm, key)
 	keyActGat := fmt.Sprintf("%s/%s", c.ActFolderGat, key)
 	keyExp := fmt.Sprintf("%s/%s", c.ExpFolder, keyOld)
@@ -90,10 +90,10 @@ func (c *Comparer) Compare(key, keyOld string) error {
 	new_models.ComparePrestates(&pActGat, &pActEvm)
 	fmt.Println()
 	fmt.Println("=========2 pExp pActEvm==============")
-	ComparePrestatesV2(&pExp, &pActEvm)
+	ComparePrestatesV2(&pExp, &pActEvm, bn)
 	fmt.Println()
 	fmt.Println("=========3 pExp pActGat==============")
-	ComparePrestatesV2(&pExp, &pActGat)
+	ComparePrestatesV2(&pExp, &pActGat, bn)
 	fmt.Println("=====================================")
 	fmt.Println()
 	fmt.Println()
@@ -101,16 +101,16 @@ func (c *Comparer) Compare(key, keyOld string) error {
 	return nil
 }
 
-func (c *Comparer) GetLatestBlockKey() (string, string) {
+func (c *Comparer) GetLatestBlockKey() (string, string, uint64) {
 	resp, err := c.RpcCli.Call(context.Background(), jsonrpc.NewRequest("23333", "eth_blockNumber"))
 	if err != nil {
 		fmt.Println(fmt.Sprintf("failed to get latest blk: %s", err.Error()))
-		return "", ""
+		return "", "", 0
 	}
 
 	if resp.Error != nil {
 		fmt.Println(fmt.Sprintf("failed to get latest blk: %s", resp.Error.Error()))
-		return "", ""
+		return "", "", 0
 	}
 
 	bnStr := ""
@@ -130,37 +130,37 @@ func (c *Comparer) GetLatestBlockKey() (string, string) {
 	resp, err = c.RpcCli.Call(context.Background(), jsonrpc.NewRequest("23334", "eth_getBlockByNumber", bnStr, false))
 	if err != nil {
 		fmt.Println(fmt.Sprintf("failed to get latest blk: %s", err.Error()))
-		return "", ""
+		return "", "", 0
 	}
 
 	if resp.Error != nil {
 		fmt.Println(fmt.Sprintf("failed to get latest blk: %s", resp.Error.Error()))
-		return "", ""
+		return "", "", 0
 	}
 
 	err = jsoniter.Unmarshal(resp.Result, &blk)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("failed to unmarshal blk: %s", err.Error()))
-		return "", ""
+		return "", "", 0
 	}
 
 	fmt.Println(blk)
 	bn, _ := hexutil.DecodeUint64(bnStr)
 	fmt.Println(fmt.Sprintf("key_new %s", fmt.Sprintf("%010d_%s", bn, blk.Hash)))
 	fmt.Println(fmt.Sprintf("key_old %s", fmt.Sprintf("%d_%s", bn, blk.Hash)))
-	return fmt.Sprintf("%010d_%s", bn, blk.Hash), fmt.Sprintf("%d_%s", bn, blk.Hash)
+	return fmt.Sprintf("%010d_%s", bn, blk.Hash), fmt.Sprintf("%d_%s", bn, blk.Hash), bn
 }
 
 func (c *Comparer) Run() {
 	// go func() {
 	for {
-		key, keyOld := c.GetLatestBlockKey()
+		key, keyOld, bn := c.GetLatestBlockKey()
 		fmt.Println(key)
 		if key == "" {
 			continue
 		}
 
-		err := c.Compare(key, keyOld)
+		err := c.Compare(key, keyOld, bn)
 		if err != nil {
 			fmt.Println(err.Error())
 			continue
@@ -191,19 +191,23 @@ func main() {
 	cmper.Run()
 }
 
-func ComparePrestatesV2(pExp *old_models.Prestates, pAct *new_models.Prestates) {
+func ComparePrestatesV2(pExp *old_models.Prestates, pAct *new_models.Prestates, bn uint64) {
 	r1 := make(map[string]struct{})
 	r2 := make(map[string]struct{})
 
-	for k, _ := range pExp.AccountPrestateMap {
+	for k, v := range pExp.AccountPrestateMap {
 		if _, ok := pAct.AccountPrestateMap[k]; !ok {
 			r1[hexutil.Encode(k[:])] = struct{}{}
+			fmt.Println(fmt.Sprintf("dbug bn[%d], addr[%s], pAct miss", bn, hexutil.Encode(k[:])))
+			fmt.Println(v)
 		}
 	}
 
 	for k, _ := range pAct.AccountPrestateMap {
 		if _, ok := pExp.AccountPrestateMap[k]; !ok {
 			r2[hexutil.Encode(k[:])] = struct{}{}
+			fmt.Println(fmt.Sprintf("dbug bn[%d], addr[%s], pExp miss", bn, hexutil.Encode(k[:])))
+			fmt.Println(v)
 		}
 	}
 
@@ -242,3 +246,7 @@ func ComparePrestatesV2(pExp *old_models.Prestates, pAct *new_models.Prestates) 
 	}
 	fmt.Println("=========================")
 }
+
+//func (c *Comparer) GetAddrInfo(addr string, bn string) {
+//	req := jsonrpc.NewRequest()
+//}
