@@ -9,6 +9,7 @@ import (
 
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/rlp"
 	jsoniter "github.com/json-iterator/go"
@@ -98,6 +99,12 @@ func (c *Comparer) Compare(key, keyOld string, bn uint64) error {
 	fmt.Println()
 	fmt.Println()
 	fmt.Println()
+	bts, _ := hexutil.Decode("0x0000000000000000000000000000000000001002")
+	addr := common.Address{}
+	addr.SetBytes(bts)
+	if _, ok := pExp.AccountPrestateMap[addr]; ok {
+		fmt.Println("exp has 0x0000000000000000000000000000000000001002")
+	}
 	return nil
 }
 
